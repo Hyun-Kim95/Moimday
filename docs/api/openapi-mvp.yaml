@@ -2,11 +2,11 @@ openapi: 3.0.3
 info:
   title: Moimday API
   version: 1.3.0
-  description: MVP REST API ??SSOT with api-contract-mvp.md (multi-group, 30 members)
+  description: MVP REST API — SSOT with api-contract-mvp.md (multi-group, 30 members)
 servers:
   - url: http://localhost:3000/v1
     description: Local dev
-  - url: https://api.Moimday.example/v1
+  - url: https://api.moimday.example/v1
     description: Production
 tags:
   - name: auth

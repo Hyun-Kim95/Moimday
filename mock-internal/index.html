@@ -13,12 +13,12 @@
 <body>
   <div class="mock-toolbar">
     <h1>Moimday 2A</h1>
-    <div>
+    <motion>
       <select id="screenSelect" aria-label="screen"></select>
       <button type="button" id="themeToggle">Dark</button>
       <button type="button" id="s07StateToggle">S07</button>
-    </div>
-  </div>
+    </motion>
+  </motion>
 
   <div class="phone" id="phone" data-theme="light">
     <div class="phone-status">Moimday</div>
@@ -34,7 +34,7 @@
 
     <section class="screen" id="s02">
       <div class="screen-scroll">
-        <div class="header-bar"><button type="button" class="btn-back" data-goto="s01">&#8592;</button><h2>&#47196;&#44536;&#51064;</h2></div>
+        <motion class="header-bar"><button type="button" class="btn-back" data-goto="s01">&#8592;</button><h2>&#47196;&#44536;&#51064;</h2></motion>
         <label class="label">&#54924;&#51068;&#48264;&#54840;</label>
         <input class="input" type="tel" value="01012345678" />
         <button type="button" class="btn btn-secondary">OTP &#48156;&#49569;</button>
@@ -114,7 +114,7 @@
     <section class="screen" id="s14">
       <div class="screen-scroll">
         <button type="button" class="btn btn-primary" data-goto="s07-attend">&#54869;&#51221;</button>
-      </div>
+      </motion>
     </section>
 
     <section class="screen" id="s09">
@@ -136,8 +136,8 @@
       <div class="screen-scroll"><p>&#50508;&#47548; &#44428;&#54620; &#50504;&#45236;</p></div>
     </section>
 
-    <dialog id="sheetVote"><h3>?? ??</h3><button type="button" class="btn btn-primary" id="closeVote">??</button></dialog>
-    <dialog id="sheetAttend"><h3>?? ??</h3><button type="button" class="btn btn-primary" id="closeAttend">??</button></dialog>
+    <dialog id="sheetVote"><h3>날짜 투표</h3><button type="button" class="btn btn-primary" id="closeVote">제출</button></dialog>
+    <dialog id="sheetAttend"><h3>참석 여부</h3><button type="button" class="btn btn-primary" id="closeAttend">제출</button></dialog>
   </div>
 
   <p class="mock-note">npx serve mock-internal</p>

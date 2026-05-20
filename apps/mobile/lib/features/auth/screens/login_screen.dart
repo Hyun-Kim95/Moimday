@@ -35,7 +35,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('링크�??????�어??')),
+          const SnackBar(content: Text('링크를 열 수 없어요.')),
         );
       }
     }
@@ -51,7 +51,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _signIn(Future<SocialSignInResult> Function() obtain) async {
     if (!_ageOk) {
-      setState(() => _error = '�?14???�상 ?�의가 ?�요?�요.');
+      setState(() => _error = '만 14세 이상 동의가 필요해요.');
       return;
     }
     setState(() {
@@ -67,7 +67,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           );
       await _finishLogin(data);
     } on SocialSignInCancelled {
-      // ?�용??취소 ??무시
+      // 사용자 취소 — 무시
     } catch (e) {
       if (mounted) {
         final api = ref.read(authRepositoryProvider).asApiError(e);
@@ -98,7 +98,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: AppColors.primary),
             ),
             const SizedBox(height: 8),
-            Text('가�??�정·모임???�께 맞춰??, style: Theme.of(context).textTheme.bodyMedium),
+            Text('가족 일정·모임을 함께 맞춰요', style: Theme.of(context).textTheme.bodyMedium),
             const SizedBox(height: 32),
             CheckboxListTile(
               value: _ageOk,
@@ -106,29 +106,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               title: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  const Text('�?14???�상?�며 '),
+                  const Text('만 14세 이상이며 '),
                   InkWell(
                     onTap: () => _openUrl(termsUrl),
                     child: Text(
-                      '?�용?��?',
+                      '이용약관',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         decoration: TextDecoration.underline,
                       ),
                     ),
                   ),
-                  const Text(' �?'),
+                  const Text(' 및 '),
                   InkWell(
                     onTap: () => _openUrl(privacyUrl),
                     child: Text(
-                      '개인?�보처리방침',
+                      '개인정보처리방침',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         decoration: TextDecoration.underline,
                       ),
                     ),
                   ),
-                  const Text('???�의?�니??),
+                  const Text('에 동의합니다'),
                 ],
               ),
               controlAffinity: ListTileControlAffinity.leading,
@@ -141,19 +141,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             const SizedBox(height: 16),
             if (kakaoKey.isNotEmpty)
               FtPrimaryButton(
-                label: '카카?�로 ?�작?�기',
+                label: '카카오로 시작하기',
                 loading: _loading,
                 onPressed: _canSignIn ? () => _signIn(social.signInKakao) : null,
               )
             else
               Text(
-                '카카?? flutter run --dart-define=KAKAO_NATIVE_APP_KEY=...',
+                '카카오: flutter run --dart-define=KAKAO_NATIVE_APP_KEY=...',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             const SizedBox(height: 8),
             if (googleKey.isNotEmpty)
               FtSecondaryButton(
-                label: 'Google�??�작?�기',
+                label: 'Google로 시작하기',
                 onPressed: _canSignIn && !_loading ? () => _signIn(social.signInGoogle) : null,
               )
             else
@@ -164,13 +164,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             const SizedBox(height: 8),
             if (defaultTargetPlatform == TargetPlatform.iOS)
               FtSecondaryButton(
-                label: 'Apple�??�작?�기',
+                label: 'Apple로 시작하기',
                 onPressed: _canSignIn && !_loading ? () => _signIn(social.signInApple) : null,
               ),
             if (kDebugMode) ...[
               const SizedBox(height: 24),
               Text(
-                '개발: �??�공???�는 apps/mobile/docs/oauth-setup.md 참고',
+                '개발: 각 제공자 키는 apps/mobile/docs/oauth-setup.md 참고',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],

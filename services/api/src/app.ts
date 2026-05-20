@@ -18,7 +18,7 @@ export async function buildApp() {
     }
     app.log.error(err);
     return reply.status(500).send({
-      error: { code: 'SERVICE_UNAVAILABLE', message: '?�비?�에 ?�결?????�어??' },
+      error: { code: 'SERVICE_UNAVAILABLE', message: '서비스에 연결할 수 없어요.' },
     });
   });
 

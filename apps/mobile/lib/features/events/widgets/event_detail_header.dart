@@ -47,11 +47,6 @@ class EventDetailHeader extends StatelessWidget {
                 ? event['pendingPollDisplayNames']
                 : event['pendingAttendDisplayNames'],
           ),
-          onShowAll: () => _showAllNames(context, _asNames(
-            status == EventStatus.pollOpen
-                ? event['pendingPollDisplayNames']
-                : event['pendingAttendDisplayNames'],
-          )),
         ),
       ],
     );
@@ -59,25 +54,7 @@ class EventDetailHeader extends StatelessWidget {
 
   List<String> _asNames(dynamic raw) {
     if (raw is! List) return const [];
-    return raw.map((e) => e.toString()).where((s) => s.isNotEmpty).toList();
+    return raw.map((e) => e.toString()).toList();
   }
 
-  void _showAllNames(BuildContext context, List<String> names) {
-    showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
-              child: Text('미응답 멤버 (${names.length}명)', style: Theme.of(ctx).textTheme.titleMedium),
-            ),
-            ...names.map((n) => ListTile(title: Text(n))),
-          ],
-        ),
-      ),
-    );
-  }
 }

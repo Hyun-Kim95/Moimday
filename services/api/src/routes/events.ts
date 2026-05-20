@@ -285,8 +285,8 @@ export async function eventRoutes(app: FastifyInstance) {
     if (!event) throw ERRORS.EVENT_NOT_FOUND();
     await assertMember(event.groupId, user.id);
 
-    const memberIds = parseTargetIds(event.targetMemberIds).length
-      ? parseTargetIds(event.targetMemberIds)
+    const memberIds = event.targetMemberIds.length
+      ? event.targetMemberIds
       : await getGroupMemberIds(event.groupId);
     const members = await prisma.user.findMany({ where: { id: { in: memberIds } } });
     const nameMap = Object.fromEntries(members.map((m) => [m.id, m.displayName]));

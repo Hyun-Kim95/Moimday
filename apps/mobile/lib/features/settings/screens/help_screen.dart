@@ -9,29 +9,29 @@ class HelpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('?��?�?)),
+      appBar: AppBar(title: const Text('도움말')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const FtSectionTitle('?�시 ?�림???��? ?�을 ??),
+          const FtSectionTitle('푸시 알림이 오지 않을 때'),
           FtCard(
             child: Text(
-              '???�정?�서 Moimday ?�림???�용??주세??\n'
-              '??Android: 배터�?최적???�외�??�정??주세??\n'
-              '??iOS: ?�림 권한???�인??주세??',
+              '• 설정에서 Moimday 알림을 허용해 주세요.\n'
+              '• Android: 배터리 최적화 예외를 설정해 주세요.\n'
+              '• iOS: 알림 권한을 확인해 주세요.',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.6),
             ),
           ),
           const SizedBox(height: 24),
-          const FtSectionTitle('?�주 묻는 질문'),
+          const FtSectionTitle('자주 묻는 질문'),
           FtCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('?�촉?� ?�루??�?번인가??', style: Theme.of(context).textTheme.titleSmall),
+                Text('독촉은 하루에 몇 번인가요?', style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 8),
                 Text(
-                  '같�? 모임·같�? ?�계(?�표/참석)???�루 1?�만 보낼 ???�어??',
+                  '같은 모임·같은 단계(투표/참석)당 하루 1회만 보낼 수 있어요.',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
