@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String         @id @default(uuid())
+  phoneE164             String?        @unique
+  email                 String?        @unique
+  displayName           String
+  lastActiveGroupId     String?
+  autoReminderEnabled   Boolean        @default(true)
+  ageConfirmedAt        DateTime?
+  sessionVersion        Int            @default(0)
+  createdAt             DateTime       @default(now())
+  oauthAccounts         OAuthAccount[]
+  memberships           Membership[]
+  organizedEvents       Event[]        @relation("Organizer")
+  dateVotes             DateVote[]
+  eventResponses        EventResponse[]
+  comments              Comment[]
+  notifications         Notification[]
+  pushTokens            PushToken[]
+  refreshTokens         RefreshToken[]
+  adminGroups           FamilyGroup[]  @relation("GroupAdmin")
+}
+
+model OAuthAccount {
+  id        String   @id @default(uuid())
+  provider  String
+  subject   String
+  userId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, subject])
+  @@index([userId])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model FamilyGroup {
+  id           String       @id @default(uuid())
+  name         String
+  adminUserId  String
+  admin        User         @relation("GroupAdmin", fields: [adminUserId], references: [id])
+  createdAt    DateTime     @default(now())
+  memberships  Membership[]
+  invites      Invite[]
+  events       Event[]
+}
+
+model Membership {
+  id        String      @id @default(uuid())
+  groupId   String
+  userId    String
+  nickname  String?
+  joinedAt  DateTime    @default(now())
+  group     FamilyGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([groupId, userId])
+}
+
+model Invite {
+  id        String      @id @default(uuid())
+  groupId   String
+  token     String      @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime    @default(now())
+  group     FamilyGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+}
+
+model Event {
+  id                     String          @id @default(uuid())
+  groupId                String
+  organizerId            String
+  title                  String
+  mode                   String
+  status                 String
+  place                  String?
+  memo                   String?
+  confirmedStartsAt      DateTime?
+  isAllDay               Boolean         @default(false)
+  pollDeadlineAt         DateTime?
+  attendanceDeadlineAt   DateTime?
+  targetMemberIds        Json
+  version                Int             @default(1)
+  cancelledAt            DateTime?
+  finalizedAt            DateTime?
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  group                  FamilyGroup     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  organizer              User            @relation("Organizer", fields: [organizerId], references: [id])
+  dateOptions            DateOption[]
+  dateVotes              DateVote[]
+  eventResponses         EventResponse[]
+  comments               Comment[]
+  lastNudgeAt            DateTime?
+}
+
+model DateOption {
+  id        String     @id @default(uuid())
+  eventId   String
+  startsAt  DateTime
+  isAllDay  Boolean    @default(false)
+  sortOrder Int        @default(0)
+  event     Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  dateVotes DateVote[]
+}
+
+model DateVote {
+  id        String     @id @default(uuid())
+  eventId   String
+  optionId  String
+  userId    String
+  value     String
+  updatedAt DateTime   @updatedAt
+  event     Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  option    DateOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([optionId, userId])
+}
+
+model EventResponse {
+  id        String   @id @default(uuid())
+  eventId   String
+  userId    String
+  value     String
+  note      String?
+  updatedAt DateTime @updatedAt
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([eventId, userId])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  eventId   String
+  authorId  String
+  body      String
+  createdAt DateTime @default(now())
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  type      String
+  eventId   String?
+  title     String
+  body      String
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PushToken {
+  id        String   @id @default(uuid())
+  userId    String
+  platform  String
+  token     String
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, platform])
+}

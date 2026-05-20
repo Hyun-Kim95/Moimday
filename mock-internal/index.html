@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Moimday Mock 2A</title>
+  <link rel="stylesheet" href="styles/tokens.css" />
+  <link rel="stylesheet" href="styles/app.css" />
+  <style>
+    dialog { border: none; border-radius: 16px 16px 0 0; padding: 20px; width: 100%; max-width: 360px; background: var(--surface); color: var(--text); }
+  </style>
+</head>
+<body>
+  <div class="mock-toolbar">
+    <h1>Moimday 2A</h1>
+    <div>
+      <select id="screenSelect" aria-label="screen"></select>
+      <button type="button" id="themeToggle">Dark</button>
+      <button type="button" id="s07StateToggle">S07</button>
+    </div>
+  </div>
+
+  <div class="phone" id="phone" data-theme="light">
+    <div class="phone-status">Moimday</div>
+
+    <section class="screen" id="s01">
+      <div class="screen-scroll" style="text-align:center;padding-top:80px;">
+        <p style="font-size:28px;">&#128106;</p>
+        <h2 style="font-size:22px;margin:12px 0;">&#44032;&#51313; &#51068;&#51221;</h2>
+        <p style="color:var(--text-muted);margin-bottom:32px;">&#47784;&#51076;&#183;&#53804;&#54364;&#183;&#52280;&#49437;</p>
+        <button type="button" class="btn btn-primary" data-goto="s02">&#49884;&#51089;</button>
+      </div>
+    </section>
+
+    <section class="screen" id="s02">
+      <div class="screen-scroll">
+        <div class="header-bar"><button type="button" class="btn-back" data-goto="s01">&#8592;</button><h2>&#47196;&#44536;&#51064;</h2></div>
+        <label class="label">&#54924;&#51068;&#48264;&#54840;</label>
+        <input class="input" type="tel" value="01012345678" />
+        <button type="button" class="btn btn-secondary">OTP &#48156;&#49569;</button>
+        <input class="input" maxlength="6" placeholder="OTP" />
+        <button type="button" class="btn btn-primary" data-goto="s03">&#54869;&#51064;</button>
+      </div>
+    </section>
+
+    <section class="screen" id="s03">
+      <div class="screen-scroll">
+        <h2>&#50864;&#47532; &#44032;&#51313;</h2>
+        <p class="card-meta">4/10</p>
+        <button type="button" class="btn btn-primary" data-goto="s04">&#54856;</button>
+      </div>
+    </section>
+
+    <section class="screen active" id="s04">
+      <div class="screen-scroll">
+        <h2>&#54856;</h2>
+        <p class="section-title">&#45236;&#51032; &#54624;&#51068;</p>
+        <article class="card" data-goto="s07-poll">
+          <span class="chip chip-poll">&#53804;&#54364;</span>
+          <h3>&#49373;&#51068; &#49885;&#49324;</h3>
+        </article>
+        <article class="card" data-goto="s07-attend">
+          <span class="chip chip-attend">&#52280;&#49437;</span>
+          <h3>&#44032;&#51313; &#50668;&#54665;</h3>
+        </article>
+        <p class="section-title">&#44032;&#51313; &#48120;&#50756;&#47308;</p>
+        <article class="card"><p class="pending-names">&#46041;&#49373;, &#51060;&#47784;</p></article>
+      </div>
+      <nav class="tab-bar" data-tab-root="s04"></nav>
+    </section>
+
+    <section class="screen screen-with-fab" id="s05">
+      <div class="screen-scroll"><h2>&#47784;&#51076;</h2></div>
+      <button type="button" class="fab" data-goto="s06">+</button>
+      <nav class="tab-bar" data-tab-root="s05"></nav>
+    </section>
+
+    <section class="screen" id="s06">
+      <div class="screen-scroll">
+        <button type="button" class="btn-back" data-goto="s05">&#8592;</button>
+        <h2>&#47784;&#51076; &#47564;&#46308;&#44592;</h2>
+        <input class="input" value="&#49373;&#51068; &#49885;&#49324;" />
+        <button type="button" class="btn btn-primary" data-goto="s07-poll">&#49373;&#49457;</button>
+      </div>
+    </section>
+
+    <section class="screen" id="s07-poll">
+      <div class="screen-scroll">
+        <button type="button" class="btn-back" data-goto="s04">&#8592;</button>
+        <h3>&#49373;&#51068; &#49885;&#49324;</h3>
+        <span class="chip chip-poll">&#53804;&#54364; &#51473;</span>
+        <button type="button" class="btn btn-primary" id="openVoteSheet">&#53804;&#54364;</button>
+        <button type="button" class="btn btn-secondary" data-goto="s13">&#54788;&#54889;</button>
+        <button type="button" class="btn btn-secondary" data-goto="s14">&#51068;&#49884; &#54869;&#51221;</button>
+      </div>
+    </section>
+
+    <section class="screen" id="s07-attend">
+      <div class="screen-scroll">
+        <button type="button" class="btn-back" data-goto="s04">&#8592;</button>
+        <h3>&#44032;&#51313; &#50668;&#54665;</h3>
+        <button type="button" class="btn btn-primary" id="openAttendSheet">&#52280;&#49437;</button>
+        <button type="button" class="btn btn-secondary">&#47784;&#51076; &#54869;&#51221;</button>
+      </div>
+    </section>
+
+    <section class="screen" id="s13">
+      <div class="screen-scroll">
+        <button type="button" class="btn-back" data-goto="s07-poll">&#8592;</button>
+        <article class="card"><h3>5/30 18:00 - 6&#47749;</h3></article>
+      </div>
+    </section>
+
+    <section class="screen" id="s14">
+      <div class="screen-scroll">
+        <button type="button" class="btn btn-primary" data-goto="s07-attend">&#54869;&#51221;</button>
+      </div>
+    </section>
+
+    <section class="screen" id="s09">
+      <div class="screen-scroll"><h2>&#51068;&#51221;</h2></div>
+      <nav class="tab-bar" data-tab-root="s09"></nav>
+    </section>
+
+    <section class="screen" id="s10">
+      <div class="screen-scroll"><h2>&#50508;&#47548;</h2></div>
+      <nav class="tab-bar" data-tab-root="s10"></nav>
+    </section>
+
+    <section class="screen" id="s11">
+      <div class="screen-scroll"><h2>&#49444;&#51221;</h2></div>
+      <nav class="tab-bar" data-tab-root="s11"></nav>
+    </section>
+
+    <section class="screen" id="s12">
+      <div class="screen-scroll"><p>&#50508;&#47548; &#44428;&#54620; &#50504;&#45236;</p></div>
+    </section>
+
+    <dialog id="sheetVote"><h3>?? ??</h3><button type="button" class="btn btn-primary" id="closeVote">??</button></dialog>
+    <dialog id="sheetAttend"><h3>?? ??</h3><button type="button" class="btn btn-primary" id="closeAttend">??</button></dialog>
+  </div>
+
+  <p class="mock-note">npx serve mock-internal</p>
+  <script src="app.js"></script>
+</body>
+</html>

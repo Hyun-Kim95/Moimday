@@ -1,0 +1,15 @@
+﻿{
+    "kitPath":  "vendor/cursor-workspace-kit",
+    "syncOk":  true,
+    "at":  "2026-05-20T12:58:53.9761122+09:00",
+    "wasBehind":  false,
+    "branch":  "main",
+    "channel":  "A",
+    "pulled":  false,
+    "message":  "Kit start OK (submodule). Behind 0 commit(s) on origin/main. Already up to date. sync-kit-product channel A completed",
+    "afterSha":  "82507db6fa54210f54d715311119544fb9a3e147",
+    "remote":  "origin",
+    "beforeSha":  "82507db6fa54210f54d715311119544fb9a3e147",
+    "ok":  true,
+    "kitRepoMode":  "submodule"
+}

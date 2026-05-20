@@ -1,0 +1,16 @@
+﻿{
+    "message":  "Kit start-setting OK. submodule: OK (vendor/cursor-workspace-kit); .cursor-kit.json: exists; kit-start-on-prompt.ps1: updated; hooks.json: exists; harness hooks: copied 3 harness hook file(s); harness hooks.json: exists (guard-shell.ps1); exists (quality-gate.ps1); sync: OK (channel A) Next: use /start \u003ctask\u003e daily.",
+    "steps":  [
+                  "submodule: OK (vendor/cursor-workspace-kit)",
+                  ".cursor-kit.json: exists",
+                  "kit-start-on-prompt.ps1: updated",
+                  "hooks.json: exists",
+                  "harness hooks: copied 3 harness hook file(s)",
+                  "harness hooks.json: exists (guard-shell.ps1); exists (quality-gate.ps1)",
+                  "sync: OK (channel A)"
+              ],
+    "kitPath":  "vendor/cursor-workspace-kit",
+    "at":  "2026-05-20T12:58:54.1174290+09:00",
+    "ok":  true,
+    "channel":  "A"
+}

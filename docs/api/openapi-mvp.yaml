@@ -1,0 +1,436 @@
+openapi: 3.0.3
+info:
+  title: Moimday API
+  version: 1.3.0
+  description: MVP REST API ??SSOT with api-contract-mvp.md (multi-group, 30 members)
+servers:
+  - url: http://localhost:3000/v1
+    description: Local dev
+  - url: https://api.Moimday.example/v1
+    description: Production
+tags:
+  - name: auth
+  - name: users
+  - name: groups
+  - name: home
+  - name: events
+  - name: notifications
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorBody:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }
+    User:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        displayName: { type: string }
+        hasGroup: { type: boolean }
+    GroupSummary:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        isAdmin: { type: boolean }
+        memberCount: { type: integer }
+    MeResponse:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        displayName: { type: string }
+        phoneMasked: { type: string, nullable: true }
+        autoReminderEnabled: { type: boolean }
+        activeGroupId: { type: string, format: uuid, nullable: true }
+        groupId: { type: string, format: uuid, nullable: true, description: activeGroupId alias }
+        groups:
+          type: array
+          items: { $ref: '#/components/schemas/GroupSummary' }
+        isGroupAdmin: { type: boolean }
+    EventStatus:
+      type: string
+      enum: [poll_open, attendance_open, finalized, cancelled]
+    EventMode:
+      type: string
+      enum: [poll, fixed]
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+  /auth/oauth/{provider}:
+    post:
+      tags: [auth]
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [kakao, google, apple]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idToken: { type: string, description: google | apple }
+                accessToken: { type: string, description: kakao }
+      responses:
+        '200':
+          description: Tokens + user
+        '401': { description: UNAUTHORIZED }
+        '503': { description: SERVICE_UNAVAILABLE }
+  /auth/token/refresh:
+    post:
+      tags: [auth]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken: { type: string }
+      responses:
+        '200': { description: New access token }
+  /users/me:
+    get:
+      tags: [users]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Current user with groups and active group
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MeResponse' }
+    patch:
+      tags: [users]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                displayName: { type: string }
+                autoReminderEnabled: { type: boolean }
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [users]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '202': { description: Deletion scheduled }
+  /users/me/active-group:
+    patch:
+      tags: [users]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [groupId]
+              properties:
+                groupId: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Active group updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MeResponse' }
+        '403': { description: FORBIDDEN }
+  /users/me/push-token:
+    put:
+      tags: [users]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [platform, token]
+              properties:
+                platform: { type: string, enum: [ios, android] }
+                token: { type: string }
+      responses:
+        '200': { description: Registered }
+  /groups:
+    post:
+      tags: [groups]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+      responses:
+        '201': { description: Group created }
+        '409': { description: USER_GROUP_LIMIT }
+  /groups/{groupId}:
+    get:
+      tags: [groups]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Group + members }
+    delete:
+      tags: [groups]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Group dissolved (admin) }
+  /groups/{groupId}/members/{userId}:
+    delete:
+      tags: [groups]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Member removed (admin) }
+  /groups/{groupId}/admin/transfer:
+    post:
+      tags: [groups]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Admin transferred }
+  /groups/{groupId}/leave:
+    post:
+      tags: [groups]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Left group }
+  /groups/{groupId}/home:
+    get:
+      tags: [home]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Home dashboard }
+  /groups/{groupId}/events:
+    get:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: filter
+          in: query
+          schema: { type: string, enum: [all, my_pending] }
+      responses:
+        '200': { description: Event list }
+    post:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '201': { description: Event created }
+  /groups/{groupId}/calendar:
+    get:
+      tags: [home]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200': { description: Calendar entries }
+  /groups/{groupId}/invites:
+    post:
+      tags: [groups]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '201': { description: Invite URL }
+  /invites/{token}/accept:
+    post:
+      tags: [groups]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Joined group; sets active group }
+        '409':
+          description: GROUP_FULL | USER_GROUP_LIMIT | ALREADY_MEMBER
+  /events/{eventId}:
+    get:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Event detail }
+    patch:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Updated }
+        '409': { description: VERSION_MISMATCH }
+  /events/{eventId}/date-votes:
+    put:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Votes saved }
+  /events/{eventId}/responses:
+    put:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Response saved }
+  /events/{eventId}/confirm-datetime:
+    post:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: attendance_open }
+  /events/{eventId}/finalize:
+    post:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: finalized }
+  /events/{eventId}/cancel:
+    post:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: cancelled }
+  /events/{eventId}/nudge:
+    post:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Nudge sent }
+  /events/{eventId}/date-poll-summary:
+    get:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Poll summary per option (up to 30 members per bucket)
+  /events/{eventId}/comments:
+    get:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Comments }
+    post:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '201': { description: Comment created }
+  /comments/{commentId}:
+    delete:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: commentId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Deleted (author, organizer, group admin) }
+        '403': { description: FORBIDDEN }
+  /events/{eventId}/extend-poll-deadline:
+    post:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pollDeadlineAt: { type: string, format: date-time }
+                addOptions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      startsAt: { type: string, format: date-time }
+                      isAllDay: { type: boolean }
+      responses:
+        '200': { description: Extended }
+  /events/{eventId}/date-options:
+    put:
+      tags: [events]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Options replaced; votes reset }
+  /notifications:
+    get:
+      tags: [notifications]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Notification list }

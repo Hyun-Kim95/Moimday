@@ -1,0 +1,31 @@
+# Dependencies
+**/node_modules/
+services/api/dist/
+**/.dart_tool/
+**/.packages
+**/build/
+
+# Env & secrets
+.env
+**/.env
+!.env.example
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Flutter / Android local
+**/local.properties
+apps/mobile/android/.gradle/
+apps/mobile/.flutter-plugins
+apps/mobile/.flutter-plugins-dependencies
+
+# Prisma
+services/api/prisma/*.db
+services/api/dev.db
+services/api/dev.db-journal
+
+# OS
+.DS_Store
+Thumbs.db
